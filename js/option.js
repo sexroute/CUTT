@@ -42,12 +42,12 @@ function sendToCutt(astrUrl,info)
     url: "http://www.cutt.com/imp/save",
     type: 'POST',
     dataType: 'html',
-    timeout: 20000,//³¬Ê±Ê±¼äÉè¶¨
-    data:para,//²ÎÊıÉèÖÃ
+    timeout: 20000,//è¶…æ—¶æ—¶é—´è®¾å®š
+    data:para,//å‚æ•°è®¾ç½®
     error: function()
     {
     	//apCallBack(false);
-    },//´íÎó´¦Àí£¬Òş²Ø½ø¶ÈÌõ
+    },//é”™è¯¯å¤„ç†ï¼Œéšè—è¿›åº¦æ¡
 	  success: function(html)
 	  {
 	    //apCallBack(html);
@@ -88,11 +88,11 @@ function GetColumns(astrAppID)
     url: "http://zhiyue.cutt.com/api/app/columns",
     type: 'GET',
     dataType: 'html',
-    timeout: 20000,//³¬Ê±Ê±¼äÉè¶¨
+    timeout: 20000,//è¶…æ—¶æ—¶é—´è®¾å®š
     error: function()
     {
     	ShowSettingResult(false);
-    },//´íÎó´¦Àí£¬Òş²Ø½ø¶ÈÌõ
+    },//é”™è¯¯å¤„ç†ï¼Œéšè—è¿›åº¦æ¡
 	  success: function(html)
 	  {
 	  	try
@@ -152,7 +152,7 @@ function UpdateUI()
 	
 	if(lstrHTML.length==0)
 	{
-			var radio1 = chrome.contextMenus.create({"title": "¼òÍøÉèÖÃ·ÖÏí", "type": "normal","contexts":["all"],
+			var radio1 = chrome.contextMenus.create({"title": "ç®€ç½‘è®¾ç½®åˆ†äº«", "type": "normal","contexts":["all"],
                                          "onclick":OnBtnGoToSetup});
 	}else
 	{
@@ -160,7 +160,7 @@ function UpdateUI()
 		{
 			var lstrName = lstrHTML[i].name;
 			var lstrAppID = lstrHTML[i].itemId;
-			var lstrTitle = "·ÖÏíµ½¼òÍøÀ¸Ä¿:"+lstrName;
+			var lstrTitle = "åˆ†äº«åˆ°ç®€ç½‘æ ç›®:"+lstrName;
 			var radio1 = chrome.contextMenus.create({"title": lstrTitle,"id":lstrAppID+"", "type": "normal","contexts":["all"],
                                          "onclick":OnBtnClick});
 		}

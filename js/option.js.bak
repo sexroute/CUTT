@@ -65,7 +65,7 @@ function ShowSettingResult(abSucceed,lstrResult)
 	
 	if(abSucceed)
 	{
-		status.innerHTML = "share setting succsssfully, just righ click to share";
+		status.innerHTML = "share setting succsssfully, just righ click to share to specified column";
 		 setTimeout(function() {
     status.innerHTML = "";
   	}, 2000);
