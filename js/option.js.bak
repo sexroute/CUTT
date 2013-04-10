@@ -2,16 +2,96 @@
 function save_options() {
   var select = document.getElementById("cat_id");
   var lstrCateId = select.value;
+  
+  var button = document.getElementById("save");
+  button.disabled  = true;
+  
   localStorage["cat_id"] = lstrCateId;
-
-  // Update status to let user know options were saved.
-  var status = document.getElementById("status");
-  status.innerHTML = "saved succsssfully";
-  setTimeout(function() {
-    status.innerHTML = "";
-  }, 2000);
+  chrome.cookies.get({url:"http://*.cutt.com/",name:"uid"}, CheckLogin);
+  
 }
 
+function CheckLogin(obj)
+{
+
+	if(null==obj || typeof(obj)=="undefined")
+	{
+		NavigateToCutt();
+	}else
+	{
+		var lstrCateId = localStorage["cat_id"] ;
+		GetColumns(lstrCateId);
+	}
+}
+function OnBtnClick(info, tab) 
+{
+  var lstrUrl = tab.url;
+  sendToCutt(lstrUrl,info);
+}
+
+function NavigateToCutt()
+{
+	chrome.tabs.create({'url': 'http://www.cutt.com'});
+}
+
+function ShowSettingResult(abSucceed,lstrResult)
+{
+	var status = document.getElementById("status");
+	
+	if(abSucceed)
+	{
+		status.innerHTML = "share setting succsssfully";
+		 setTimeout(function() {
+    status.innerHTML = "";
+  	}, 2000);
+	}else
+	{
+		if(null==lstrResult)
+		{
+			lstrResult = "unkown";
+		}
+		status.innerHTML = "share setting failed reason:"+lstrResult;
+	}
+ var button = document.getElementById("save");
+  button.disabled  = false;
+  UpdateUI();
+
+}
+function GetColumns(astrAppID)
+{
+		$.ajax({
+    url: "http://zhiyue.cutt.com/api/app/columns",
+    type: 'GET',
+    dataType: 'html',
+    timeout: 20000,//超时时间设定
+    error: function()
+    {
+    	ShowSettingResult(false);
+    },//错误处理，隐藏进度条
+	  success: function(html)
+	  {
+	  	try
+	  	{
+	  		var loData = $.parseJSON(html);
+	  		if(loData.length>0)
+	  		{
+	  			localStorage["columns"] = html;
+	  			ShowSettingResult(true);
+	  		}else
+	  		{
+	  			ShowSettingResult(false,html);
+	  		}     
+	      	      
+	    }catch(e)
+	    {
+	    	ShowSettingResult(false,html);
+	    }
+	  },
+	  beforeSend: function(jqXHR, settings){
+                jqXHR.setRequestHeader("app", astrAppID);
+    }
+	});
+}
 // Restores select box state to saved value from localStorage.
 function restore_options() {
   var favorite = localStorage["cat_id"];
@@ -22,9 +102,42 @@ function restore_options() {
   }
   var select = document.getElementById("cat_id");
   select.value = favorite;
+  localStorage["cat_id"] = favorite; 
 }
 
 document.addEventListener('DOMContentLoaded', function () {
  document.querySelector('button').addEventListener('click', save_options);
  restore_options();
 });
+
+function UpdateUI()
+{
+	var lstrHTML = "";
+	try
+	{
+	 lstrHTML = $.parseJSON(localStorage["columns"]);
+	 if(lstrHTML== null || typeof(lstrHTML)=="undefined")
+	 {
+	 	lstrHTML = "";
+	 }
+	}catch(e)
+	{
+		lstrHTML = "";
+	}
+	
+	if(lstrHTML.length==0)
+	{
+			var radio1 = chrome.contextMenus.create({"title": "简网设置分享", "type": "normal","contexts":["all"],
+                                         "onclick":OnBtnGoToSetup});
+	}else
+	{
+		for(i = 0;i< lstrHTML.length;i++)
+		{
+			var lstrName = lstrHTML[i].name;
+			var lstrAppID = lstrHTML[i].itemId;
+			var lstrTitle = "分享到简网栏目:"+lstrName;
+			var radio1 = chrome.contextMenus.create({"title": lstrTitle,"id":lstrAppID+"", "type": "normal","contexts":["all"],
+                                         "onclick":OnBtnClick});
+		}
+	}
+}

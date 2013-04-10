@@ -1,4 +1,4 @@
-var __gCuttDebug = true;
+﻿var __gCuttDebug = true;
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) 
 {
     if (changeInfo.status == 'complete' && tab.url.search(/^chrome/i) == -1) 
@@ -53,9 +53,10 @@ function CheckLogin(obj)
 		NavigateToCutt();
 	}
 }
-function sendToCutt(astrUrl,apCallBack)
+function sendToCutt(astrUrl,info)
 {
-	 var favorite = localStorage["cat_id"];
+	var favorite = info.menuItemId ;
+	//1.check login
 	chrome.cookies.get({url:"http://*.cutt.com/",name:"uid"}, CheckLogin);
 	para = "clipId="+favorite+"&url="+encodeURIComponent(astrUrl);
 	console.log(para);
@@ -83,11 +84,49 @@ function sendToCutt(astrUrl,apCallBack)
 function OnBtnClick(info, tab) 
 {
   var lstrUrl = tab.url;
-  sendToCutt(lstrUrl,null);
+  sendToCutt(lstrUrl,info);
 }
 
-var radio1 = chrome.contextMenus.create({"title": "分享到简网", "type": "normal","contexts":["all"],
+function OnBtnGoToSetup()
+{
+	var lstrUrl = chrome.extension.getURL("options.html");
+	chrome.tabs.create({'url': "pages/options.html"});
+}
+function InitUI()
+{
+	var lstrHTML = "";
+	try
+	{
+	 lstrHTML = $.parseJSON(localStorage["columns"]);
+	 if(lstrHTML== null || typeof(lstrHTML)=="undefined")
+	 {
+	 	lstrHTML = "";
+	 }
+	}catch(e)
+	{
+		lstrHTML = "";
+	}
+	
+	if(lstrHTML.length==0)
+	{
+			var radio1 = chrome.contextMenus.create({"title": "简网设置分享", "type": "normal","contexts":["all"],
+                                         "onclick":OnBtnGoToSetup});
+	}else
+	{
+		for(i = 0;i< lstrHTML.length;i++)
+		{
+			var lstrName = lstrHTML[i].name;
+			var lstrAppID = lstrHTML[i].itemId;
+			var lstrTitle = "分享到简网栏目:"+lstrName;
+			var radio1 = chrome.contextMenus.create({"title": lstrTitle,"id":lstrAppID+"", "type": "normal","contexts":["all"],
                                          "onclick":OnBtnClick});
+		}
+	}
+}
+
+InitUI();
+
+
 
 
 
