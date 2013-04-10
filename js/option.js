@@ -17,6 +17,8 @@ function CheckLogin(obj)
 	if(null==obj || typeof(obj)=="undefined")
 	{
 		NavigateToCutt();
+		var button = document.getElementById("save");
+    button.disabled  = false;
 	}else
 	{
 		var lstrCateId = localStorage["cat_id"] ;
@@ -63,7 +65,7 @@ function ShowSettingResult(abSucceed,lstrResult)
 	
 	if(abSucceed)
 	{
-		status.innerHTML = "share setting succsssfully";
+		status.innerHTML = "share setting succsssfully, just righ click to share to specified column";
 		 setTimeout(function() {
     status.innerHTML = "";
   	}, 2000);
@@ -75,7 +77,7 @@ function ShowSettingResult(abSucceed,lstrResult)
 		}
 		status.innerHTML = "share setting failed reason:"+lstrResult;
 	}
- var button = document.getElementById("save");
+  var button = document.getElementById("save");
   button.disabled  = false;
   UpdateUI();
 
