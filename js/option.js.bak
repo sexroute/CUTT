@@ -161,14 +161,7 @@ document.addEventListener('DOMContentLoaded', function ()
     document.querySelector('button').addEventListener('click', save_options);
     restore_options();
 });
-function OnBtnGoToSetup()
-{
-    var lstrUrl = chrome.extension.getURL("options.html");
-    chrome.tabs.create(
-    {
-        'url': "pages/options.html"
-    });
-}
+
 function refreshColumns()
 {
     var lstrCateId = localStorage["cat_id"];
